@@ -1,0 +1,32 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Color x:Key="LoggingDisplay.Window.GrayColor1">#ff1f1f1f</Color>
+    <Color x:Key="LoggingDisplay.Window.GrayColor2">#ff262626</Color>
+    <Color x:Key="LoggingDisplay.Window.GrayColor3">#ff313131</Color>
+    <Color x:Key="LoggingDisplay.Window.GrayColor4">#ff404040</Color>
+    <Color x:Key="LoggingDisplay.Window.GrayColor5">#ff535353</Color>
+    <Color x:Key="LoggingDisplay.Window.GrayColor6">#ff6a6a6a</Color>
+    <Color x:Key="LoggingDisplay.Disabled.FontColor">#ff868686</Color>
+    <Color x:Key="LoggingDisplay.FontColor">#ffdddddd</Color>
+    <Color x:Key="LoggingDisplay.RedColor">#ff0033</Color>
+    <Color x:Key="LoggingDisplay.GreenColor">#32CD32</Color>
+    <Color x:Key="LoggingDisplay.BlueColor">#ff80deff</Color>
+    <Color x:Key="LoggingDisplay.OrangeColor">#ffffd067</Color>
+    <Color x:Key="LoggingDisplay.YellowColor">#ffe900</Color>
+    <Color x:Key="LoggingDisplay.Selected.BackgroundColor">#ff3c67b6</Color>
+
+    <SolidColorBrush Color="{StaticResource LoggingDisplay.Window.GrayColor1}" x:Key="LoggingDisplay.Window.GrayBrush1"/>
+    <SolidColorBrush Color="{StaticResource LoggingDisplay.Window.GrayColor2}" x:Key="LoggingDisplay.Window.GrayBrush2"/>
+    <SolidColorBrush Color="{StaticResource LoggingDisplay.Window.GrayColor3}" x:Key="LoggingDisplay.Window.GrayBrush3"/>
+    <SolidColorBrush Color="{StaticResource LoggingDisplay.Window.GrayColor4}" x:Key="LoggingDisplay.Window.GrayBrush4"/>
+    <SolidColorBrush Color="{StaticResource LoggingDisplay.Window.GrayColor5}" x:Key="LoggingDisplay.Window.GrayBrush5"/>
+    <SolidColorBrush Color="{StaticResource LoggingDisplay.Window.GrayColor6}" x:Key="LoggingDisplay.Window.GrayBrush6"/>
+    <SolidColorBrush Color="{StaticResource LoggingDisplay.Disabled.FontColor}" x:Key="LoggingDisplay.Disabled.FontBrush"/>
+    <SolidColorBrush Color="{StaticResource LoggingDisplay.FontColor}" x:Key="LoggingDisplay.FontBrush"/>
+    <SolidColorBrush Color="{StaticResource LoggingDisplay.RedColor}" x:Key="LoggingDisplay.RedBrush"/>
+    <SolidColorBrush Color="{StaticResource LoggingDisplay.GreenColor}" x:Key="LoggingDisplay.GreenBrush"/>
+    <SolidColorBrush Color="{StaticResource LoggingDisplay.BlueColor}" x:Key="LoggingDisplay.BlueBrush"/>
+    <SolidColorBrush Color="{StaticResource LoggingDisplay.OrangeColor}" x:Key="LoggingDisplay.OrangeBrush"/>
+    <SolidColorBrush Color="{StaticResource LoggingDisplay.YellowColor}" x:Key="LoggingDisplay.YellowBrush"/>
+    <SolidColorBrush Color="{StaticResource LoggingDisplay.Selected.BackgroundColor}" x:Key="LoggingDisplay.Selected.BackgroundBrush"/>
+</ResourceDictionary>
