@@ -11,7 +11,7 @@ public:
 	virtual ~ISinkBase() = default;
 
 	[[nodiscard]] const std::string& GetName() const noexcept { return m_name; }
-	virtual void Emit(std::string_view message, LogLevel lvl, const std::source_location& loc = std::source_location::current()) noexcept = 0;
+	virtual void Emit(std::string_view message, LogLevel lvl, const std::source_location& loc) noexcept = 0;
 protected:
 	std::string m_name;
 };
@@ -24,7 +24,7 @@ public:
 	virtual void Emit(
 		std::string_view message,
 		LogLevel lvl,
-		const std::source_location& loc = std::source_location::current()) noexcept override
+		const std::source_location& loc) noexcept override
 	{
 		static_cast<T*>(this)->Emit(message, lvl, loc);
 	}

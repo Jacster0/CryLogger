@@ -27,48 +27,40 @@ private:
 	Logger& operator=(Logger&& rhs)      = delete;
 	~Logger()                            = default;
 
-	void InternalLog(auto&&... args) const noexcept;
-	void InternalFormatLog(std::string_view fmt, auto&&... args) const noexcept;
-	void SetLevel(LogLevel lvl);
-	void SetSourceLoc(const std::source_location& loc) noexcept;
+	void InternalLog(LogLevel lvl, const std::source_location& loc, auto&&... args) const noexcept;
+	void InternalFormatLog(LogLevel lvl, std::string_view fmt, const std::source_location& loc, auto&&... args) const noexcept;
 
 	std::mutex m_loggingMutex;
-	LogLevel m_level = LogLevel::info;
-	std::source_location m_sourceLoc;
-
+	static std::mutex m_sinkMutex;
 	std::unordered_map<std::string_view, std::shared_ptr<ISinkBase>> m_sinks;
 };
 
 void Logger::Log(LogLevel lvl, const std::source_location& loc, auto && ...args) noexcept {
 	std::scoped_lock lock(m_loggingMutex);
-	SetLevel(lvl);
-	SetSourceLoc(loc);
-	InternalLog(std::forward<decltype(args)>(args)...);
+	InternalLog(lvl, loc, std::forward<decltype(args)>(args)...);
 }
 
-void Logger::InternalLog(auto && ...args) const noexcept {
+void Logger::InternalLog(LogLevel lvl, const std::source_location& loc, auto&&... args) const noexcept {
 	std::stringstream ss;
 	(ss << ... << args);
 
 	const std::string message = ss.str();
 
 	for (const auto& [key, sink] : m_sinks) {
-		sink->Emit(message, m_level, m_sourceLoc);
+		sink->Emit(message, lvl, loc);
 	}
 }
 
 void Logger::FormatLog(LogLevel lvl, std::string_view fmt, const std::source_location& loc, auto && ...args) noexcept {
 	std::scoped_lock lock(m_loggingMutex);
-	SetLevel(lvl);
-	SetSourceLoc(loc);
-	InternalFormatLog(fmt, std::forward<decltype(args)>(args)...);
+	InternalFormatLog(lvl, fmt, loc, std::forward<decltype(args)>(args)...);
 }
 
-void Logger::InternalFormatLog(std::string_view fmt, auto && ...args) const noexcept {
+void Logger::InternalFormatLog(LogLevel lvl, std::string_view fmt, const std::source_location& loc, auto&&... args) const noexcept {
 	std::string message = std::format(fmt, std::forward<decltype(args)>(args)...);
 
 	for (const auto& [key, sink] : m_sinks) {
-		sink->Emit(message, m_level, m_sourceLoc);
+		sink->Emit(message, lvl, loc);
 	}
 }
 
