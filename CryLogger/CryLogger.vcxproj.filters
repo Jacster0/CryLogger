@@ -57,4 +57,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\Screenshots\ConsoleLogger.PNG">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\Screenshots\ManagedLogger.PNG">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

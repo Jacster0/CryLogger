@@ -159,6 +159,10 @@
     <ClInclude Include="Sinks\ManagedLoggerSink.h" />
     <ClInclude Include="Sinks\Sink.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\Screenshots\ConsoleLogger.PNG" />
+    <Image Include="Resources\Screenshots\ManagedLogger.PNG" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
