@@ -3,8 +3,8 @@ Modern Logger written in C++20 and C#
 
 This is a Logger that I made for my Game Engine called Crystal (Hence why this logger is called CryLogger, don't confuse it with CryEngine!).
 The core logger is written in C++20 but there is also a WPF application written in C# which is used to output the logging messages to the WPF gui.
-Communication between the core logger and the WPF logger is done with IPC using Named pipes.
-Code example
+Communication between the core logger and the WPF logger is done with IPC using Named pipes.\
+## Code example
 
 ```cpp
 #include "Core/Logger.h"
