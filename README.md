@@ -8,8 +8,7 @@ Communication between the core logger and the WPF logger is done with IPC using 
 
 ```cpp
 #include "Core/Logger.h"
-#include "Sinks/ConsoleSink.h"
-#include "Sinks/ManagedLoggerSink.h"
+#include "Sinks/Sinks"
 
 int main() {
 	//Attaching this sink to the logger will output logging messages to the Windows command line
