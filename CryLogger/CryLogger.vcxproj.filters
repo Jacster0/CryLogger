@@ -56,6 +56,9 @@
     <ClInclude Include="Sinks\ManagedLoggerSink.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Sinks\Sinks.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\Screenshots\ConsoleLogger.PNG">

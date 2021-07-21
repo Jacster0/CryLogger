@@ -158,6 +158,7 @@
     <ClInclude Include="Sinks\ConsoleSink.h" />
     <ClInclude Include="Sinks\ManagedLoggerSink.h" />
     <ClInclude Include="Sinks\Sink.h" />
+    <ClInclude Include="Sinks\Sinks.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\Screenshots\ConsoleLogger.PNG" />
