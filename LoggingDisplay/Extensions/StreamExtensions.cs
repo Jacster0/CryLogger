@@ -17,7 +17,7 @@ namespace LoggingDisplay.Extensions
 
             fixed (byte* ptr = buffer)
             {
-                return Marshal.PtrToStructure<T>((IntPtr)ptr);
+                return Marshal.PtrToStructure<T>(new IntPtr(ptr));
             }
         }
     }
