@@ -15,7 +15,7 @@ public:
 	[[nodiscard]] static constexpr auto NewLine() noexcept { return std::endl<char, std::char_traits<char>>; }
 
 	static void AttachSink(const std::shared_ptr<ISinkBase>& sink) noexcept;
-	static void RemoveSink(const std::string_view name) noexcept;
+	static void RemoveSink(std::string_view name) noexcept;
 
 	constexpr void Log(LogLevel lvl, const std::source_location& loc, auto&&... args) const noexcept;
 	constexpr void FormatLog(LogLevel lvl, const std::source_location& loc, std::string_view fmt, auto&&... args) const noexcept;
