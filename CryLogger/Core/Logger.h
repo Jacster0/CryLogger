@@ -17,8 +17,8 @@ public:
 	static void AttachSink(const std::shared_ptr<ISinkBase>& sink) noexcept;
 	static void RemoveSink(const std::string_view name) noexcept;
 
-	constexpr void Log(LogLevel lvl, const std::source_location& loc, auto&&... args) noexcept;
-	constexpr void FormatLog(LogLevel lvl, const std::source_location& loc, std::string_view fmt, auto&&... args) noexcept;
+	constexpr void Log(LogLevel lvl, const std::source_location& loc, auto&&... args) const noexcept;
+	constexpr void FormatLog(LogLevel lvl, const std::source_location& loc, std::string_view fmt, auto&&... args) const noexcept;
 private:
 	Logger()                             = default;
 	Logger(const Logger& rhs)            = delete;
@@ -27,12 +27,12 @@ private:
 	Logger& operator=(Logger&& rhs)      = delete;
 	~Logger()                            = default;
 
-	std::mutex m_loggingMutex;
+	mutable std::mutex m_loggingMutex;
 	static std::mutex m_sinkMutex;
 	std::unordered_map<std::string_view, std::shared_ptr<ISinkBase>> m_sinks;
 };
 
-constexpr void Logger::Log(LogLevel lvl, const std::source_location& loc, auto&& ...args) noexcept {
+constexpr void Logger::Log(LogLevel lvl, const std::source_location& loc, auto&& ...args) const noexcept {
 	std::scoped_lock lock(m_loggingMutex);
 
 	const std::string& message = (std::stringstream{} << ... << args).str();
@@ -42,7 +42,7 @@ constexpr void Logger::Log(LogLevel lvl, const std::source_location& loc, auto&&
 	}
 }
 
-constexpr void Logger::FormatLog(LogLevel lvl, const std::source_location& loc, std::string_view fmt, auto&&... args) noexcept {
+constexpr void Logger::FormatLog(LogLevel lvl, const std::source_location& loc, std::string_view fmt, auto&&... args) const noexcept {
 	std::scoped_lock lock(m_loggingMutex);
 
 	const std::string message = std::format(fmt, std::forward<decltype(args)>(args)...);
