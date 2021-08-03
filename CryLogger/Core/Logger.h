@@ -12,17 +12,17 @@
 
 template<size_t Length>
 struct StringLiteral {
-	constexpr StringLiteral(char const* const str) noexcept {
+	constexpr StringLiteral(const char* const str) noexcept {
 		std::copy_n(str, Length, Value);
 	}
 
-	constexpr operator const char* () const noexcept { return Value; }
+	[[nodiscard]] constexpr operator const char* () const noexcept { return Value; }
 
 	char Value[Length + 1]{};
 };
 
 template<size_t Length>
-StringLiteral(char const (&)[Length]) -> StringLiteral<Length - 1>;
+StringLiteral(const char (&)[Length]) -> StringLiteral<Length - 1>;
 
 class Logger {
 public:
@@ -69,6 +69,17 @@ constexpr void Logger::FormatLog(LogLevel lvl, const std::source_location& loc, 
 	}
 }
 
+template<std::derived_from<ISinkBase> T, StringLiteral name>
+constexpr void Logger::AttachSink(auto&&... args) noexcept {
+	std::scoped_lock lock(m_sinkMutex);
+
+	Logger::Get().m_sinks.emplace(
+		name,
+		std::make_unique<T>(
+			std::forward<decltype(args)>(args)...)
+	);
+}
+
 #define crylog_info(...)    Logger::Get().Log(LogLevel::info,    std::source_location::current(), __VA_ARGS__)
 #define crylog_warning(...) Logger::Get().Log(LogLevel::warning, std::source_location::current(), __VA_ARGS__)
 #define crylog_error(...)   Logger::Get().Log(LogLevel::error,   std::source_location::current(), __VA_ARGS__)
@@ -77,12 +88,3 @@ constexpr void Logger::FormatLog(LogLevel lvl, const std::source_location& loc, 
 #define cryfmtlog_warning(fmt, ...) Logger::Get().FormatLog(LogLevel::warning, std::source_location::current(), fmt, __VA_ARGS__)
 #define cryfmtlog_error(fmt, ...)   Logger::Get().FormatLog(LogLevel::error,   std::source_location::current(), fmt, __VA_ARGS__)
 
-template<std::derived_from<ISinkBase> T, StringLiteral name>
-constexpr void Logger::AttachSink(auto&&... args) noexcept {
-	std::scoped_lock lock(m_sinkMutex);
-	Logger::Get().m_sinks.emplace(
-		name, 
-		std::make_unique<T>(
-			std::forward<decltype(args)>(args)...)
-	);
-}
