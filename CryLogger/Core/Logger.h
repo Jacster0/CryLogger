@@ -16,7 +16,7 @@ struct StringLiteral {
 		std::copy_n(str, Length, Value);
 	}
 
-	constexpr operator char const* () const noexcept { return Value; }
+	constexpr operator const char* () const noexcept { return Value; }
 
 	char Value[Length + 1]{};
 };
