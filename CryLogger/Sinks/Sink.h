@@ -7,10 +7,9 @@
 
 class ISinkBase {
 public:
-	explicit ISinkBase(const std::string& name) noexcept : m_name(name) {};
+	ISinkBase() noexcept = default;
 	virtual ~ISinkBase() = default;
 
-	[[nodiscard]] const std::string& GetName() const noexcept { return m_name; }
 	virtual void Emit(std::string_view message, LogLevel lvl, const std::source_location& loc) noexcept = 0;
 protected:
 	std::string m_name;
@@ -19,7 +18,7 @@ protected:
 template<typename T>
 class ISink : public ISinkBase {
 public:
-	explicit ISink(const std::string& name) noexcept : ISinkBase(name) {};
+	ISink() noexcept = default;
 
 	virtual void Emit(
 		std::string_view message,

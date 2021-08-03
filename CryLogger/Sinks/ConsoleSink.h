@@ -4,6 +4,6 @@
 
 class ConsoleSink final : public ISink<ConsoleSink> {
 public:
-	explicit ConsoleSink(const std::string& name) noexcept : ISink(name) {};
+	ConsoleSink() noexcept = default;
 	void Emit(std::string_view message, LogLevel lvl, const std::source_location& loc) noexcept;
 };

@@ -5,7 +5,7 @@
 
 class ManagedLoggerSink final : public ISink<ManagedLoggerSink> {
 public:
-	explicit ManagedLoggerSink(const std::string& name) noexcept;
+	ManagedLoggerSink() noexcept;
 	void Emit(std::string_view message, LogLevel lvl, const std::source_location& loc) noexcept;
 private:
 	NamedPipeClient m_namedPipe;

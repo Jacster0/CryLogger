@@ -31,6 +31,7 @@ public:
 
 	template<std::derived_from<ISinkBase> T, StringLiteral name>
 	static constexpr void AttachSink(auto&&... args) noexcept;
+
 	static void RemoveSink(std::string_view name) noexcept;
 
 	constexpr void Log(LogLevel lvl, const std::source_location& loc, auto&&... args) const noexcept;
@@ -82,7 +83,6 @@ constexpr void Logger::AttachSink(auto&&... args) noexcept {
 	Logger::Get().m_sinks.emplace(
 		name, 
 		std::make_unique<T>(
-			std::string(name),
 			std::forward<decltype(args)>(args)...)
 	);
 }

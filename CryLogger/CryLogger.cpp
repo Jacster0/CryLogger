@@ -1,6 +1,8 @@
 #include "Core/Logger.h"
 #include "Sinks/Sinks.h"
 
+#include <iostream>
+
 void init_logger() noexcept {
 	Logger::AttachSink<ConsoleSink, "ConsoleLogger">();
 	Logger::AttachSink<ManagedLoggerSink, "ManagedLogger">();
