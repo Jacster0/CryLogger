@@ -7,13 +7,6 @@ Logger& Logger::Get() noexcept {
 	return logger;
 }
 
-void Logger::AttachSink(const std::shared_ptr<ISinkBase>& sink) noexcept {
-	std::scoped_lock lock(m_sinkMutex);
-
-	auto& logger = Logger::Get();
-	logger.m_sinks.emplace(sink->GetName(), sink);
-}
-
 void Logger::RemoveSink(std::string_view name) noexcept {
 	std::scoped_lock lock(m_sinkMutex);
 
