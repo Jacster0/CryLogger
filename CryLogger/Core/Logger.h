@@ -1,41 +1,71 @@
 #pragma once
 #include <mutex>
 #include <string>
+#include <vector>
 #include <format>
 #include <memory>
-#include <unordered_map>
 #include <source_location>
 #include <concepts>
 
 #include "LogLevels.h"
 #include "../Sinks/Sink.h"
 
-template<size_t Length>
-struct StringLiteral {
-	constexpr StringLiteral(const char* const str) noexcept {
-		std::copy_n(str, Length, Value);
-	}
-
-	[[nodiscard]] constexpr operator const char* () const noexcept { return Value; }
-
-	char Value[Length + 1]{};
-};
-
-template<size_t Length>
-StringLiteral(const char (&)[Length]) -> StringLiteral<Length - 1>;
-
 class Logger {
 public:
-	[[nodiscard]] static Logger& Get() noexcept;
+	[[nodiscard]] static Logger& Get() noexcept {
+		static Logger logger;
+		return logger;
+	}
+
 	[[nodiscard]] static constexpr auto NewLine() noexcept { return std::endl<char, std::char_traits<char>>; }
 
-	template<std::derived_from<ISinkBase> T, StringLiteral name>
-	static constexpr void AttachSink(auto&&... args) noexcept;
+	template<std::derived_from<ISinkBase> T, std::constructible_from<T>... Args>
+	static constexpr void AddSink(Args&&... args) noexcept {
+		std::scoped_lock lock(Logger::Get().m_sinkMutex);
 
-	static void RemoveSink(std::string_view name) noexcept;
+		Logger::Get().m_sinks.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
+	}
 
-	constexpr void Log(LogLevel lvl, const std::source_location& loc, auto&&... args) const noexcept;
-	constexpr void FormatLog(LogLevel lvl, const std::source_location& loc, std::string_view fmt, auto&&... args) const noexcept;
+	static void AddSink(std::unique_ptr<ISinkBase>&& sink) noexcept {
+		std::scoped_lock lock(Logger::Get().m_sinkMutex);
+
+		Logger::Get().m_sinks.emplace_back(std::move(sink));
+	}
+
+	/// <summary>
+	/// Removes all sinks of type T that is attached to the Logger
+	/// </summary>
+	template<std::derived_from<ISinkBase> T>
+	static void RemoveSink() noexcept {
+		std::scoped_lock lock(Logger::Get().m_sinkMutex);
+
+		const auto typeId = typeid(decltype(std::declval<T>())).hash_code();
+		static const auto lambda = [typeId](const auto& sink) -> bool { return typeid(*sink).hash_code() == typeId; };
+
+		auto& logger = Logger::Get();
+
+		logger.m_sinks.erase(std::remove_if(logger.m_sinks.begin(), logger.m_sinks.end(), lambda), logger.m_sinks.end());
+	}
+
+	constexpr void Log(LogLevel lvl, const std::source_location& loc, auto&&... args) const noexcept {
+		std::scoped_lock lock(m_loggingMutex);
+
+		const std::string& message = (std::stringstream{} << ... << args).str();
+
+		for (const auto& sink : m_sinks) {
+			sink->Emit(message, lvl, loc);
+		}
+	}
+
+	constexpr void FormatLog(LogLevel lvl, const std::source_location& loc, std::string_view fmt, auto&&... args) const noexcept {
+		std::scoped_lock lock(m_loggingMutex);
+
+		const std::string message = std::format(fmt, std::forward<decltype(args)>(args)...);
+
+		for (const auto& sink : m_sinks) {
+			sink->Emit(message, lvl, loc);
+		}
+	}
 private:
 	Logger()                             = default;
 	Logger(const Logger& rhs)            = delete;
@@ -45,40 +75,9 @@ private:
 	~Logger()                            = default;
 
 	mutable std::mutex m_loggingMutex;
-	static std::mutex m_sinkMutex;
-	std::unordered_map<std::string_view, std::unique_ptr<ISinkBase>> m_sinks;
+	std::mutex m_sinkMutex;
+	std::vector<std::unique_ptr<ISinkBase>> m_sinks;
 };
-
-constexpr void Logger::Log(LogLevel lvl, const std::source_location& loc, auto&& ...args) const noexcept {
-	std::scoped_lock lock(m_loggingMutex);
-
-	const std::string& message = (std::stringstream{} << ... << args).str();
-
-	for (const auto& [key, sink] : m_sinks) {
-		sink->Emit(message, lvl, loc);
-	}
-}
-
-constexpr void Logger::FormatLog(LogLevel lvl, const std::source_location& loc, std::string_view fmt, auto&&... args) const noexcept {
-	std::scoped_lock lock(m_loggingMutex);
-
-	const std::string message = std::format(fmt, std::forward<decltype(args)>(args)...);
-
-	for (const auto& [key, sink] : m_sinks) {
-		sink->Emit(message, lvl, loc);
-	}
-}
-
-template<std::derived_from<ISinkBase> T, StringLiteral name>
-constexpr void Logger::AttachSink(auto&&... args) noexcept {
-	std::scoped_lock lock(m_sinkMutex);
-
-	Logger::Get().m_sinks.emplace(
-		name,
-		std::make_unique<T>(
-			std::forward<decltype(args)>(args)...)
-	);
-}
 
 #define crylog_info(...)    Logger::Get().Log(LogLevel::info,    std::source_location::current(), __VA_ARGS__)
 #define crylog_warning(...) Logger::Get().Log(LogLevel::warning, std::source_location::current(), __VA_ARGS__)
@@ -87,4 +86,3 @@ constexpr void Logger::AttachSink(auto&&... args) noexcept {
 #define cryfmtlog_info(fmt, ...)    Logger::Get().FormatLog(LogLevel::info,    std::source_location::current(), fmt, __VA_ARGS__)
 #define cryfmtlog_warning(fmt, ...) Logger::Get().FormatLog(LogLevel::warning, std::source_location::current(), fmt, __VA_ARGS__)
 #define cryfmtlog_error(fmt, ...)   Logger::Get().FormatLog(LogLevel::error,   std::source_location::current(), fmt, __VA_ARGS__)
-

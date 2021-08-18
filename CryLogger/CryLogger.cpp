@@ -4,8 +4,8 @@
 #include <iostream>
 
 void init_logger() noexcept {
-	Logger::AttachSink<ConsoleSink, "ConsoleLogger">();
-	Logger::AttachSink<ManagedLoggerSink, "ManagedLogger">();
+	Logger::AddSink<ConsoleSink>();
+	Logger::AddSink<ManagedLoggerSink>();
 }
 
 int main() {

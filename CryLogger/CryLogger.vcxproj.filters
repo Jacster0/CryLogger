@@ -18,9 +18,6 @@
     <ClCompile Include="CryLogger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Logger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CLI\Console.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

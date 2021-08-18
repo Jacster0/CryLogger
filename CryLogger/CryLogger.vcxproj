@@ -144,7 +144,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CLI\Console.cpp" />
-    <ClCompile Include="Core\Logger.cpp" />
     <ClCompile Include="CryLogger.cpp" />
     <ClCompile Include="Networking\NamedPipeClient.cpp" />
     <ClCompile Include="Sinks\ConsoleSink.cpp" />
