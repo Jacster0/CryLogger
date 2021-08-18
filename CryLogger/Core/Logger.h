@@ -19,11 +19,13 @@ public:
 
 	[[nodiscard]] static constexpr auto NewLine() noexcept { return std::endl<char, std::char_traits<char>>; }
 
-	template<std::derived_from<ISinkBase> T, std::constructible_from<T>... Args>
-	static constexpr void AddSink(Args&&... args) noexcept {
+	template<std::derived_from<ISinkBase> T>
+	static constexpr void AddSink(auto&&... args) noexcept 
+		requires std::constructible_from<T, decltype(args)...> 
+	{
 		std::scoped_lock lock(Logger::Get().m_sinkMutex);
 
-		Logger::Get().m_sinks.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
+		Logger::Get().m_sinks.emplace_back(std::make_unique<T>(std::forward<decltype(args)>(args)...));
 	}
 
 	static void AddSink(std::unique_ptr<ISinkBase>&& sink) noexcept {
