@@ -12,9 +12,9 @@ Communication between the core logger and the WPF logger is done with IPC using 
 
 int main() {
 	//Attaching this sink to the logger will output logging messages to the Windows command line
-	Logger::AttachSink(std::make_shared<ConsoleSink>("ConsoleLogger"));
+	Logger::AddSink<ConsoleSink>();
 	//Attaching this sink to the logger will output logging messages to the WPF GUI.
-	Logger::AttachSink(std::make_shared<ManagedLoggerSink>("ManagedLogger"));
+	Logger::AddSink<ManagedLoggerSink>();
 
 	//Normal logging
 	crylog_info("Hello");
@@ -25,6 +25,10 @@ int main() {
 	cryfmtlog_info("{}", "Hello");
 	cryfmtlog_warning("{}", "World");
 	cryfmtlog_error("{}", "!");
+	
+	//Removing sinks is this easy!
+	Logger::RemoveSink<ConsoleSink>();
+	Logger::RemoveSink<ManagedLoggerSink>();
 }
 ```
 
