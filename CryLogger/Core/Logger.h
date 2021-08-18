@@ -10,6 +10,11 @@
 #include "LogLevels.h"
 #include "../Sinks/Sink.h"
 
+template<typename T>
+concept Emittable = requires(T t) {
+	{ t.Emit(std::string{}, LogLevel::info, std::source_location::current()) };
+};
+
 class Logger {
 public:
 	[[nodiscard]] static Logger& Get() noexcept {
@@ -21,16 +26,14 @@ public:
 
 	template<std::derived_from<ISinkBase> T>
 	static constexpr void AddSink(auto&&... args) noexcept 
-		requires std::constructible_from<T, decltype(args)...> 
+		requires std::constructible_from<T, decltype(args)...> && Emittable<T>
 	{
 		std::scoped_lock lock(Logger::Get().m_sinkMutex);
-
 		Logger::Get().m_sinks.emplace_back(std::make_unique<T>(std::forward<decltype(args)>(args)...));
 	}
 
 	static void AddSink(std::unique_ptr<ISinkBase>&& sink) noexcept {
 		std::scoped_lock lock(Logger::Get().m_sinkMutex);
-
 		Logger::Get().m_sinks.emplace_back(std::move(sink));
 	}
 
@@ -41,10 +44,10 @@ public:
 	static void RemoveSink() noexcept {
 		std::scoped_lock lock(Logger::Get().m_sinkMutex);
 
-		const auto typeId = typeid(decltype(std::declval<T>())).hash_code();
+		const auto typeId        = typeid(decltype(std::declval<T>())).hash_code();
 		static const auto lambda = [typeId](const auto& sink) -> bool { return typeid(*sink).hash_code() == typeId; };
 
-		auto& logger = Logger::Get();
+		const auto& logger = Logger::Get();
 
 		logger.m_sinks.erase(std::remove_if(logger.m_sinks.begin(), logger.m_sinks.end(), lambda), logger.m_sinks.end());
 	}
