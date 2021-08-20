@@ -46,9 +46,9 @@ public:
 
 		auto& logger = Logger::Get();
 
-		logger.m_sinks.erase(std::remove_if(
-			logger.m_sinks.begin(), logger.m_sinks.end(), 
-			[] (const auto& sink) { 
+		logger.m_sinks.erase(std::remove_if( logger.m_sinks.begin(), logger.m_sinks.end(), 
+			[] (const auto& sink) 
+			{ 
 				return typeid(*sink) == typeid(T); 
 			}
 		), logger.m_sinks.end());
