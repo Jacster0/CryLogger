@@ -47,7 +47,7 @@ public:
 		const auto typeId        = typeid(decltype(std::declval<T>())).hash_code();
 		static const auto lambda = [typeId](const auto& sink) -> bool { return typeid(*sink).hash_code() == typeId; };
 
-		const auto& logger = Logger::Get();
+		auto& logger = Logger::Get();
 
 		logger.m_sinks.erase(std::remove_if(logger.m_sinks.begin(), logger.m_sinks.end(), lambda), logger.m_sinks.end());
 	}
