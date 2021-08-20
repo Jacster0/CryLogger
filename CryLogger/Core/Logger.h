@@ -44,12 +44,14 @@ public:
 	static void RemoveSink() noexcept {
 		std::scoped_lock lock(Logger::Get().m_sinkMutex);
 
-		const auto typeId        = typeid(decltype(std::declval<T>())).hash_code();
-		static const auto lambda = [typeId](const auto& sink) -> bool { return typeid(*sink).hash_code() == typeId; };
-
 		auto& logger = Logger::Get();
 
-		logger.m_sinks.erase(std::remove_if(logger.m_sinks.begin(), logger.m_sinks.end(), lambda), logger.m_sinks.end());
+		logger.m_sinks.erase(std::remove_if(
+			logger.m_sinks.begin(), logger.m_sinks.end(), 
+			[] (const auto& sink) { 
+				return typeid(*sink) == typeid(T); 
+			}
+		), logger.m_sinks.end());
 	}
 
 	constexpr void Log(LogLevel lvl, const std::source_location& loc, auto&&... args) const noexcept {
